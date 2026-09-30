@@ -19,4 +19,12 @@ class CRUD extends PDO
             $password
         );
     }
+
+    public function select(string $table, string $field = "id", string $order = "ASC"): array
+    {
+        $sql = "SELECT * FROM $table ORDER BY $field $order";
+        $stmt = $this->query($sql);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
