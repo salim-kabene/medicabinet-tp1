@@ -27,4 +27,22 @@ class CRUD extends PDO
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function insert($table, $data)
+    {
+        $fieldNames = implode(", ", array_keys($data));
+        $placeholders = ":" . implode(", :", array_keys($data));
+
+        $sql = "INSERT INTO $table ($fieldNames)
+            VALUES ($placeholders)";
+
+        $stmt = $this->prepare($sql);
+
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        $stmt->execute();
+
+        return $this->lastInsertId();
+    }
 }

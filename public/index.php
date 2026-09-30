@@ -44,9 +44,11 @@ $activePage = "appointments";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <?php require __DIR__ . "/../includes/head.php"; ?>
 </head>
+
 <body>
     <div class="app-layout">
         <?php require __DIR__ . "/../includes/sidebar.php"; ?>
@@ -61,7 +63,11 @@ $activePage = "appointments";
                         <span aria-hidden="true">+</span> Planifier un rendez-vous
                     </a>
                 </header>
-
+                <?php if (($_GET["success"] ?? "") === "created"): ?>
+                <p class="alert alert--success" role="status">
+                    Le rendez-vous a été enregistré.
+                </p>
+                <?php endif; ?>
                 <section class="stats" aria-label="Statistiques du cabinet">
                     <div class="stats__card">
                         <h2 class="stats__label">Aujourd’hui</h2>
@@ -80,14 +86,16 @@ $activePage = "appointments";
                 <form class="filters" action="index.php" method="get">
                     <div class="filters__field">
                         <label class="filters__label" for="filter-date">Date</label>
-                        <input class="filters__input" type="date" id="filter-date" name="date" value="<?= htmlspecialchars($date) ?>">
+                        <input class="filters__input" type="date" id="filter-date" name="date"
+                            value="<?= htmlspecialchars($date) ?>">
                     </div>
                     <div class="filters__field">
                         <label class="filters__label" for="filter-status">Statut</label>
                         <select class="filters__select" id="filter-status" name="status">
                             <option value="">Tous les statuts</option>
                             <?php foreach ($statusLabels as $value => $label): ?>
-                                <option value="<?= htmlspecialchars($value) ?>" <?= $status === $value ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                            <option value="<?= htmlspecialchars($value) ?>" <?= $status === $value ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($label) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -98,42 +106,53 @@ $activePage = "appointments";
                 </form>
 
                 <?php if (empty($appointments)): ?>
-                    <p class="appointments__empty">Aucun rendez-vous ne correspond à votre sélection.</p>
+                <p class="appointments__empty">Aucun rendez-vous ne correspond à votre sélection.</p>
                 <?php else: ?>
-                    <div class="appointments__table-wrapper">
-                        <table class="data-table">
-                            <caption class="data-table__caption">Liste des rendez-vous</caption>
-                            <thead class="data-table__head">
-                                <tr class="data-table__row">
-                                    <th scope="col">Date et heure</th>
-                                    <th scope="col">Patient</th>
-                                    <th scope="col">Médecin</th>
-                                    <th scope="col">Services</th>
-                                    <th scope="col">Statut</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="data-table__body">
-                                <?php foreach ($appointments as $item): ?>
-                                    <tr class="data-table__row">
-                                        <td class="data-table__cell"><?= htmlspecialchars((new DateTimeImmutable($item['starts_at']))->format('d/m/Y à H:i')) ?></td>
-                                        <td class="data-table__cell"><?= htmlspecialchars($item['patient_first_name'] . ' ' . $item['patient_last_name']) ?></td>
-                                        <td class="data-table__cell"><?= htmlspecialchars($item['doctor_first_name'] . ' ' . $item['doctor_last_name']) ?></td>
-                                        <td class="data-table__cell"><?= htmlspecialchars($item['service_names'] ?? 'Aucun service') ?></td>
-                                        <td class="data-table__cell">
-                                            <span class="status-badge status-badge--<?= htmlspecialchars($item['status']) ?>"><?= htmlspecialchars($statusLabels[$item['status']] ?? $item['status']) ?></span>
-                                        </td>
-                                        <td class="data-table__cell">
-                                            <a class="data-table__action" href="appointment-edit.php?id=<?= (int) $item['id'] ?>" aria-label="Modifier le rendez-vous numéro <?= (int) $item['id'] ?>">Modifier</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="appointments__table-wrapper">
+                    <table class="data-table">
+                        <caption class="data-table__caption">Liste des rendez-vous</caption>
+                        <thead class="data-table__head">
+                            <tr class="data-table__row">
+                                <th scope="col">Date et heure</th>
+                                <th scope="col">Patient</th>
+                                <th scope="col">Médecin</th>
+                                <th scope="col">Services</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="data-table__body">
+                            <?php foreach ($appointments as $item): ?>
+                            <tr class="data-table__row">
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars((new DateTimeImmutable($item['starts_at']))->format('d/m/Y à H:i')) ?>
+                                </td>
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars($item['patient_first_name'] . ' ' . $item['patient_last_name']) ?>
+                                </td>
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars($item['doctor_first_name'] . ' ' . $item['doctor_last_name']) ?>
+                                </td>
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars($item['service_names'] ?? 'Aucun service') ?></td>
+                                <td class="data-table__cell">
+                                    <span
+                                        class="status-badge status-badge--<?= htmlspecialchars($item['status']) ?>"><?= htmlspecialchars($statusLabels[$item['status']] ?? $item['status']) ?></span>
+                                </td>
+                                <td class="data-table__cell">
+                                    <a class="data-table__action"
+                                        href="appointment-edit.php?id=<?= (int) $item['id'] ?>"
+                                        aria-label="Modifier le rendez-vous numéro <?= (int) $item['id'] ?>">Modifier</a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
                 <?php endif; ?>
             </main>
         </div>
     </div>
 </body>
+
 </html>

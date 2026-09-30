@@ -1,4 +1,5 @@
 <form class="appointment-form" action="<?= htmlspecialchars($formAction) ?>" method="post">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>">
     <?php if ($values['id'] !== ''): ?>
     <input type="hidden" name="id" value="<?= (int) $values['id'] ?>">
     <?php endif; ?>

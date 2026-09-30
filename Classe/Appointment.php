@@ -81,4 +81,30 @@ class Appointment extends CRUD
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    public function createWithServices($data, $serviceIds)
+    {
+        $this->beginTransaction();
+
+        try {
+            $appointmentId = $this->insert("appointments", $data);
+
+            foreach ($serviceIds as $serviceId) {
+                $this->insert("appointment_service", [
+                    "appointment_id" => $appointmentId,
+                    "service_id" => $serviceId,
+                ]);
+            }
+
+            $this->commit();
+
+            return $appointmentId;
+        } catch (Throwable $exception) {
+            if ($this->inTransaction()) {
+                $this->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
 }
