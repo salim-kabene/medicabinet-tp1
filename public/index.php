@@ -18,89 +18,97 @@ $statusLabels = [
     "cancelled" => "Annulé",
     "absent" => "Absent",
 ];
+
+$pageTitle = "Rendez-vous — MédiCabinet";
+$activePage = "appointments";
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Rendez-vous — MédiCabinet</title>
-
-    <link rel="stylesheet" href="assets/css/reset.css">
-    <link rel="stylesheet" href="assets/css/tokens.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <?php require __DIR__ . "/../includes/head.php"; ?>
 </head>
 
 <body>
-    <header class="site-header">
-        <a class="site-header__brand" href="index.php">MédiCabinet</a>
-    </header>
+    <div class="app-layout">
+        <?php require __DIR__ . "/../includes/sidebar.php"; ?>
 
-    <main class="appointments">
-        <header class="appointments__header">
-            <h1 class="appointments__title">Rendez-vous</h1>
-            <p class="appointments__description">Consultez les rendez-vous du cabinet.</p>
-        </header>
+        <div class="app-layout__content">
+            <main class="appointments">
+                <header class="appointments__header">
+                    <h1 class="appointments__title">Rendez-vous</h1>
 
-        <?php if (empty($appointments)): ?>
-        <p class="appointments__empty">Aucun rendez-vous enregistré.</p>
-        <?php else: ?>
-        <div class="appointments__table-wrapper">
-            <table class="data-table">
-                <caption class="data-table__caption">Liste des rendez-vous</caption>
-                <thead class="data-table__head">
-                    <tr class="data-table__row">
-                        <th scope="col">Date et heure</th>
-                        <th scope="col">Patient</th>
-                        <th scope="col">Médecin</th>
-                        <th scope="col">Statut</th>
-                    </tr>
-                </thead>
+                    <p class="appointments__description">
+                        Organisez les consultations du cabinet.
+                    </p>
+                </header>
 
-                <tbody class="data-table__body">
-                    <?php foreach ($appointments as $item): ?>
-                    <tr class="data-table__row">
-                        <td class="data-table__cell">
-                            <?= htmlspecialchars($item["starts_at"]) ?>
-                        </td>
+                <?php if (empty($appointments)): ?>
+                <p class="appointments__empty">
+                    Aucun rendez-vous enregistré.
+                </p>
+                <?php else: ?>
+                <div class="appointments__table-wrapper">
+                    <table class="data-table">
+                        <caption class="data-table__caption">
+                            Liste des rendez-vous
+                        </caption>
 
-                        <td class="data-table__cell">
-                            <?= htmlspecialchars(
-                                        $item["patient_first_name"]
-                                            . " "
-                                            . $item["patient_last_name"]
-                                    ) ?>
-                        </td>
+                        <thead class="data-table__head">
+                            <tr class="data-table__row">
+                                <th scope="col">Date et heure</th>
+                                <th scope="col">Patient</th>
+                                <th scope="col">Médecin</th>
+                                <th scope="col">Services</th>
+                                <th scope="col">Statut</th>
+                            </tr>
+                        </thead>
 
-                        <td class="data-table__cell">
-                            <?= htmlspecialchars(
-                                        $item["doctor_first_name"]
-                                            . " "
-                                            . $item["doctor_last_name"]
-                                    ) ?>
-                        </td>
+                        <tbody class="data-table__body">
+                            <?php foreach ($appointments as $item): ?>
+                            <tr class="data-table__row">
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars($item["starts_at"]) ?>
+                                </td>
 
-                        <td class="data-table__cell">
-                            <?= htmlspecialchars(
-                                        $statusLabels[$item["status"]]
-                                            ?? $item["status"]
-                                    ) ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars(
+                                                $item["patient_first_name"]
+                                                    . " "
+                                                    . $item["patient_last_name"]
+                                            ) ?>
+                                </td>
+
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars(
+                                                $item["doctor_first_name"]
+                                                    . " "
+                                                    . $item["doctor_last_name"]
+                                            ) ?>
+                                </td>
+
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars(
+                                                $item["service_names"] ?? "Aucun service"
+                                            ) ?>
+                                </td>
+
+                                <td class="data-table__cell">
+                                    <?= htmlspecialchars(
+                                                $statusLabels[$item["status"]]
+                                                    ?? $item["status"]
+                                            ) ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </main>
         </div>
-        <?php endif; ?>
-    </main>
-
-    <footer class="site-footer">
-        <p class="site-footer__text">MédiCabinet — Gestion des rendez-vous</p>
-    </footer>
+    </div>
 </body>
 
 </html>
