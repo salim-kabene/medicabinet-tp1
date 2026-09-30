@@ -4,12 +4,14 @@ require_once __DIR__ . "/CRUD.php";
 
 class Patient extends CRUD
 {
+    public function selectAll()
+    {
+        return $this->select("patients", "last_name");
+    }
+
     public function countAll()
     {
-        $sql = "SELECT COUNT(*) FROM patients";
-
-        $stmt = $this->query($sql);
-
+        $stmt = $this->query("SELECT COUNT(*) FROM patients");
         return (int) $stmt->fetchColumn();
     }
 }

@@ -20,6 +20,4 @@
             </li>
         </ul>
     </nav>
-
-    <p class="sidebar__note">Données fictives</p>
 </aside>
