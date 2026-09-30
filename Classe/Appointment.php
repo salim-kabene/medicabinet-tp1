@@ -4,7 +4,7 @@ require_once __DIR__ . "/CRUD.php";
 
 class Appointment extends CRUD
 {
-    public function selectWithDetails($date = "", $status = "")
+    public function selectWithDetails($date = "", $status = "", $patientId = null, $appointmentId = null)
     {
         $conditions = [];
         if ($date !== "") {
@@ -12,6 +12,12 @@ class Appointment extends CRUD
         }
         if ($status !== "") {
             $conditions[] = "appointments.status = :status";
+        }
+        if ($patientId !== null) {
+            $conditions[] = "appointments.patient_id = :patient_id";
+        }
+        if ($appointmentId !== null) {
+            $conditions[] = "appointments.id = :appointment_id";
         }
         $where = "";
         if (!empty($conditions)) {
@@ -39,8 +45,25 @@ class Appointment extends CRUD
         if ($status !== "") {
             $stmt->bindValue(":status", $status);
         }
+        if ($patientId !== null) {
+            $stmt->bindValue(":patient_id", $patientId, PDO::PARAM_INT);
+        }
+        if ($appointmentId !== null) {
+            $stmt->bindValue(":appointment_id", $appointmentId, PDO::PARAM_INT);
+        }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function selectByPatient($patientId)
+    {
+        return array_reverse($this->selectWithDetails("", "", $patientId));
+    }
+
+    public function findWithDetails($id)
+    {
+        $rows = $this->selectWithDetails("", "", null, $id);
+        return $rows[0] ?? false;
     }
 
     public function countToday()
@@ -85,76 +108,56 @@ class Appointment extends CRUD
     public function createWithServices($data, $serviceIds)
     {
         $this->beginTransaction();
-
         try {
             $appointmentId = $this->insert("appointments", $data);
-
             foreach ($serviceIds as $serviceId) {
                 $this->insert("appointment_service", [
                     "appointment_id" => $appointmentId,
                     "service_id" => $serviceId,
                 ]);
             }
-
             $this->commit();
-
             return $appointmentId;
         } catch (Throwable $exception) {
             if ($this->inTransaction()) {
                 $this->rollBack();
             }
-
             throw $exception;
         }
     }
+
     public function updateWithServices($id, $data, $serviceIds)
     {
         $this->beginTransaction();
-
         try {
-            // Vérifier et verrouiller le rendez-vous pendant la transaction.
-            $sql = "SELECT id FROM appointments WHERE id = :id FOR UPDATE";
-
-            $stmt = $this->prepare($sql);
+            $stmt = $this->prepare("SELECT id FROM appointments WHERE id = :id FOR UPDATE");
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
-
             if ($stmt->fetchColumn() === false) {
                 $this->rollBack();
                 return false;
             }
-
-            // Modifier les informations du rendez-vous.
             $data["id"] = $id;
             $this->update("appointments", $data);
-
-            // Retirer uniquement ses anciennes associations de services.
-            $sql = "DELETE FROM appointment_service
-                WHERE appointment_id = :appointment_id";
-
-            $stmt = $this->prepare($sql);
+            $stmt = $this->prepare("DELETE FROM appointment_service WHERE appointment_id = :appointment_id");
             $stmt->bindValue(":appointment_id", $id, PDO::PARAM_INT);
             $stmt->execute();
-
-            // Enregistrer la nouvelle sélection.
             foreach ($serviceIds as $serviceId) {
                 $this->insert("appointment_service", [
                     "appointment_id" => $id,
                     "service_id" => $serviceId,
                 ]);
             }
-
             $this->commit();
-
             return true;
         } catch (Throwable $exception) {
             if ($this->inTransaction()) {
                 $this->rollBack();
             }
-
             throw $exception;
         }
     }
+
     public function deleteById($id)
     {
         return $this->delete("appointments", $id);

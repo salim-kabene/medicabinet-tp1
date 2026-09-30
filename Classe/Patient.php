@@ -14,4 +14,12 @@ class Patient extends CRUD
         $stmt = $this->query("SELECT COUNT(*) FROM patients");
         return (int) $stmt->fetchColumn();
     }
+
+    public function findById($id)
+    {
+        $stmt = $this->prepare("SELECT * FROM patients WHERE id = :id");
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
