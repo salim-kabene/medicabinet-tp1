@@ -69,4 +69,34 @@ class Appointment extends CRUD
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function countToday()
+    {
+        $today = date("Y-m-d");
+
+        $sql = "SELECT COUNT(*)
+            FROM appointments
+            WHERE DATE(starts_at) = :today";
+
+        $stmt = $this->prepare($sql);
+        $stmt->bindValue(":today", $today);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countUpcoming()
+    {
+        $now = date("Y-m-d H:i:s");
+
+        $sql = "SELECT COUNT(*)
+            FROM appointments
+            WHERE starts_at > :now
+            AND status IN ('planned', 'confirmed')";
+
+        $stmt = $this->prepare($sql);
+        $stmt->bindValue(":now", $now);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
 }

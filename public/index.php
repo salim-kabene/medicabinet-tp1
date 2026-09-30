@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../Classe/Appointment.php";
+require_once __DIR__ . "/../Classe/Patient.php";
 
 // Libellés utilisés dans le formulaire et le tableau.
 $statusLabels = [
@@ -39,7 +40,13 @@ if ($date !== "") {
 // Récupération des rendez-vous.
 try {
     $appointment = new Appointment();
+
     $appointments = $appointment->selectWithDetails($date, $status);
+    $todayCount = $appointment->countToday();
+    $upcomingCount = $appointment->countUpcoming();
+
+    $patient = new Patient();
+    $patientCount = $patient->countAll();
 } catch (PDOException $exception) {
     http_response_code(500);
     exit("Le service est temporairement indisponible.");
@@ -72,7 +79,22 @@ $activePage = "appointments";
                         Organisez les consultations du cabinet.
                     </p>
                 </header>
+                <section class="stats" aria-label="Statistiques du cabinet">
+                    <div class="stats__card">
+                        <h2 class="stats__label">Aujourd’hui</h2>
+                        <p class="stats__value"><?= $todayCount ?></p>
+                    </div>
 
+                    <div class="stats__card">
+                        <h2 class="stats__label">À venir</h2>
+                        <p class="stats__value"><?= $upcomingCount ?></p>
+                    </div>
+
+                    <div class="stats__card">
+                        <h2 class="stats__label">Patients</h2>
+                        <p class="stats__value"><?= $patientCount ?></p>
+                    </div>
+                </section>
                 <!-- Filtres -->
                 <form class="filters" action="index.php" method="get">
                     <div class="filters__field">
