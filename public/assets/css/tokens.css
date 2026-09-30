@@ -1,0 +1,21 @@
+/* 02 — Couleurs, typographie et dimensions communes */
+:root {
+    --color-text: #142b43;
+    --color-muted: #536b7f;
+    --color-primary: #007e8f;
+    --color-primary-hover: #006776;
+    --color-link: #0866a5;
+    --color-canvas: #f2f7fa;
+    --color-surface: #fff;
+    --color-soft: #f3f7fa;
+    --color-border: #dbe6ed;
+    --color-active: #d9f1f3;
+    --color-danger: #cf2030;
+    --color-danger-hover: #ad1725;
+    --font-body: Arial, Helvetica, sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-soft: 0 4px 18px rgb(20 43 67 / 5%);
+    --sidebar-width: 224px;
+}
