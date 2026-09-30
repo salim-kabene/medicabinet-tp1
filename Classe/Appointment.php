@@ -107,4 +107,52 @@ class Appointment extends CRUD
             throw $exception;
         }
     }
+    public function updateWithServices($id, $data, $serviceIds)
+    {
+        $this->beginTransaction();
+
+        try {
+            // Vérifier et verrouiller le rendez-vous pendant la transaction.
+            $sql = "SELECT id FROM appointments WHERE id = :id FOR UPDATE";
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if ($stmt->fetchColumn() === false) {
+                $this->rollBack();
+                return false;
+            }
+
+            // Modifier les informations du rendez-vous.
+            $data["id"] = $id;
+            $this->update("appointments", $data);
+
+            // Retirer uniquement ses anciennes associations de services.
+            $sql = "DELETE FROM appointment_service
+                WHERE appointment_id = :appointment_id";
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(":appointment_id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Enregistrer la nouvelle sélection.
+            foreach ($serviceIds as $serviceId) {
+                $this->insert("appointment_service", [
+                    "appointment_id" => $id,
+                    "service_id" => $serviceId,
+                ]);
+            }
+
+            $this->commit();
+
+            return true;
+        } catch (Throwable $exception) {
+            if ($this->inTransaction()) {
+                $this->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
 }

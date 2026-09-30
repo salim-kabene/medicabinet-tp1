@@ -67,6 +67,10 @@ $activePage = "appointments";
                 <p class="alert alert--success" role="status">
                     Le rendez-vous a été enregistré.
                 </p>
+                <?php elseif (($_GET["success"] ?? "") === "updated"): ?>
+                <p class="alert alert--success" role="status">
+                    Les modifications ont été enregistrées.
+                </p>
                 <?php endif; ?>
                 <section class="stats" aria-label="Statistiques du cabinet">
                     <div class="stats__card">
