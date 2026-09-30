@@ -1,0 +1,13 @@
+# Configuration locale : identifiants MySQL
+/config/database.php
+
+# Journaux
+*.log
+
+# Configuration personnelle des éditeurs
+/.idea/
+/.vscode/
+
+# Fichiers du système
+.DS_Store
+Thumbs.db
