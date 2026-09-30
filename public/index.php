@@ -3,14 +3,7 @@
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../Classe/Appointment.php";
 
-try {
-    $appointment = new Appointment();
-    $appointments = $appointment->selectWithDetails();
-} catch (PDOException $exception) {
-    http_response_code(500);
-    exit("Le service est temporairement indisponible.");
-}
-
+// Libellés utilisés dans le formulaire et le tableau.
 $statusLabels = [
     "planned" => "Planifié",
     "confirmed" => "Confirmé",
@@ -19,6 +12,40 @@ $statusLabels = [
     "absent" => "Absent",
 ];
 
+// Récupération des filtres.
+$date = $_GET["date"] ?? "";
+$status = $_GET["status"] ?? "";
+
+// Validation des paramètres reçus.
+if (!is_string($date) || !is_string($status)) {
+    http_response_code(400);
+    exit("Filtres invalides.");
+}
+
+if ($status !== "" && !array_key_exists($status, $statusLabels)) {
+    http_response_code(400);
+    exit("Statut invalide.");
+}
+
+if ($date !== "") {
+    $parsedDate = DateTimeImmutable::createFromFormat("!Y-m-d", $date);
+
+    if ($parsedDate === false || $parsedDate->format("Y-m-d") !== $date) {
+        http_response_code(400);
+        exit("Date invalide.");
+    }
+}
+
+// Récupération des rendez-vous.
+try {
+    $appointment = new Appointment();
+    $appointments = $appointment->selectWithDetails($date, $status);
+} catch (PDOException $exception) {
+    http_response_code(500);
+    exit("Le service est temporairement indisponible.");
+}
+
+// Informations utilisées par les fichiers communs.
 $pageTitle = "Rendez-vous — MédiCabinet";
 $activePage = "appointments";
 ?>
@@ -36,6 +63,8 @@ $activePage = "appointments";
 
         <div class="app-layout__content">
             <main class="appointments">
+
+                <!-- Présentation de la page -->
                 <header class="appointments__header">
                     <h1 class="appointments__title">Rendez-vous</h1>
 
@@ -44,9 +73,48 @@ $activePage = "appointments";
                     </p>
                 </header>
 
+                <!-- Filtres -->
+                <form class="filters" action="index.php" method="get">
+                    <div class="filters__field">
+                        <label class="filters__label" for="filter-date">
+                            Date
+                        </label>
+
+                        <input class="filters__input" type="date" id="filter-date" name="date"
+                            value="<?= htmlspecialchars($date) ?>">
+                    </div>
+
+                    <div class="filters__field">
+                        <label class="filters__label" for="filter-status">
+                            Statut
+                        </label>
+
+                        <select class="filters__select" id="filter-status" name="status">
+                            <option value="">Tous les statuts</option>
+
+                            <?php foreach ($statusLabels as $value => $label): ?>
+                            <option value="<?= htmlspecialchars($value) ?>" <?= $status === $value ? "selected" : "" ?>>
+                                <?= htmlspecialchars($label) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="filters__actions">
+                        <button class="button button--primary" type="submit">
+                            Filtrer
+                        </button>
+
+                        <a class="button button--secondary" href="index.php">
+                            Réinitialiser
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Liste des rendez-vous -->
                 <?php if (empty($appointments)): ?>
                 <p class="appointments__empty">
-                    Aucun rendez-vous enregistré.
+                    Aucun rendez-vous ne correspond à votre sélection.
                 </p>
                 <?php else: ?>
                 <div class="appointments__table-wrapper">
@@ -106,6 +174,7 @@ $activePage = "appointments";
                     </table>
                 </div>
                 <?php endif; ?>
+
             </main>
         </div>
     </div>
