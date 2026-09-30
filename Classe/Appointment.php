@@ -155,4 +155,8 @@ class Appointment extends CRUD
             throw $exception;
         }
     }
+    public function deleteById($id)
+    {
+        return $this->delete("appointments", $id);
+    }
 }

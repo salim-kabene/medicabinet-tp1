@@ -71,6 +71,10 @@ $activePage = "appointments";
                 <p class="alert alert--success" role="status">
                     Les modifications ont été enregistrées.
                 </p>
+                <?php elseif (($_GET["success"] ?? "") === "deleted"): ?>
+                <p class="alert alert--success" role="status">
+                    Le rendez-vous a été supprimé.
+                </p>
                 <?php endif; ?>
                 <section class="stats" aria-label="Statistiques du cabinet">
                     <div class="stats__card">
@@ -144,9 +148,19 @@ $activePage = "appointments";
                                         class="status-badge status-badge--<?= htmlspecialchars($item['status']) ?>"><?= htmlspecialchars($statusLabels[$item['status']] ?? $item['status']) ?></span>
                                 </td>
                                 <td class="data-table__cell">
-                                    <a class="data-table__action"
-                                        href="appointment-edit.php?id=<?= (int) $item['id'] ?>"
-                                        aria-label="Modifier le rendez-vous numéro <?= (int) $item['id'] ?>">Modifier</a>
+                                    <div class="data-table__actions">
+                                        <a class="data-table__action"
+                                            href="appointment-edit.php?id=<?= (int) $item["id"] ?>"
+                                            aria-label="Modifier le rendez-vous numéro <?= (int) $item["id"] ?>">
+                                            Modifier
+                                        </a>
+
+                                        <a class="data-table__action data-table__action--danger"
+                                            href="appointment-delete.php?id=<?= (int) $item["id"] ?>"
+                                            aria-label="Supprimer le rendez-vous numéro <?= (int) $item["id"] ?>">
+                                            Supprimer
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
