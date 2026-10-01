@@ -1,7 +1,36 @@
 /* 04 — Coque de l'application et navigation */
 .app-layout { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); width: calc(100% - 32px); max-width: 1440px; min-height: calc(100dvh - 32px); margin: 16px auto; overflow: hidden; background: var(--color-surface); border: 1px solid #bad2df; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); }
-.sidebar { padding: 24px 14px; background: linear-gradient(110deg, #f5f9fb, #fbfdfe); border-right: 1px solid #e2edf3; }
-.sidebar__brand { display: flex; align-items: center; gap: 9px; padding: 0 8px; margin-bottom: 32px; color: var(--color-text); font-size: 19px; font-weight: 700; letter-spacing: -.5px; }
+/* Sidebar : fond médical sur toute la hauteur */
+.sidebar {
+    padding: 24px 14px;
+    border-right: 1px solid #e2edf3;
+
+    background-color: #f5f9fb;
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(245, 249, 251, 0.96) 0%,
+            rgba(245, 249, 251, 0.90) 28%,
+            rgba(245, 249, 251, 0.50) 60%,
+            rgba(245, 249, 251, 0.20) 100%
+        ),
+        url("../images/sidebar-medical.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.sidebar__brand { 
+    display: flex; 
+    align-items: center; 
+    gap: 9px; 
+    padding: 0 8px; 
+    margin-bottom: 32px; 
+    color: var(--color-text); 
+    font-size: 19px; 
+    font-weight: 700; 
+    letter-spacing: -.5px; 
+}
 .sidebar__brand:hover { text-decoration: none; }
 .sidebar__logo { flex: 0 0 auto; }
 .sidebar__list { padding: 0; list-style: none; display: grid; gap: 6px; }
@@ -79,7 +108,15 @@
 /* Mobile : navigation visible, formulaires sur une colonne, tableaux défilants */
 @media (max-width: 760px) {
     .app-layout { display: block; width: 100%; min-height: 100dvh; margin: 0; border: 0; border-radius: 0; }
-    .sidebar { padding: 16px; border-right: 0; border-bottom: 1px solid var(--color-border); }
+    .sidebar {
+        padding: 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--color-border);
+
+        /* Sur mobile, la navigation devient une barre horizontale. */
+        background-image: none;
+        background-color: #f5f9fb;
+    }
     .sidebar__brand { margin-bottom: 14px; font-size: 19px; }
     .sidebar__logo { width: 30px; height: 30px; }
     .sidebar__list { grid-template-columns: 1fr 1fr; gap: 10px; }
