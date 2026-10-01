@@ -4,6 +4,9 @@ require_once __DIR__ . "/CRUD.php";
 
 class Appointment extends CRUD
 {
+    // Table principale utilisée par ce modèle.
+    protected string $table = "appointments";
+
     public function selectWithDetails($date = "", $status = "", $patientId = null, $appointmentId = null)
     {
         $conditions = [];
@@ -29,7 +32,7 @@ class Appointment extends CRUD
                     doctors.first_name AS doctor_first_name,
                     doctors.last_name AS doctor_last_name,
                     GROUP_CONCAT(services.name ORDER BY services.name SEPARATOR ' + ') AS service_names
-                FROM appointments
+                FROM {$this->table} AS appointments
                 INNER JOIN patients ON appointments.patient_id = patients.id
                 INNER JOIN doctors ON appointments.doctor_id = doctors.id
                 LEFT JOIN appointment_service ON appointments.id = appointment_service.appointment_id
@@ -68,7 +71,7 @@ class Appointment extends CRUD
 
     public function countToday()
     {
-        $sql = "SELECT COUNT(*) FROM appointments WHERE DATE(starts_at) = :today";
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE DATE(starts_at) = :today";
         $stmt = $this->prepare($sql);
         $stmt->bindValue(":today", date("Y-m-d"));
         $stmt->execute();
@@ -77,7 +80,7 @@ class Appointment extends CRUD
 
     public function countUpcoming()
     {
-        $sql = "SELECT COUNT(*) FROM appointments
+        $sql = "SELECT COUNT(*) FROM {$this->table} AS appointments
                 WHERE starts_at > :now AND status IN ('planned', 'confirmed')";
         $stmt = $this->prepare($sql);
         $stmt->bindValue(":now", date("Y-m-d H:i:s"));
@@ -88,7 +91,7 @@ class Appointment extends CRUD
     // Charger les valeurs d'un rendez-vous pour le formulaire de modification.
     public function findById($id)
     {
-        $sql = "SELECT * FROM appointments WHERE id = :id";
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -109,7 +112,7 @@ class Appointment extends CRUD
     {
         $this->beginTransaction();
         try {
-            $appointmentId = $this->insert("appointments", $data);
+            $appointmentId = $this->insert($this->table, $data);
             foreach ($serviceIds as $serviceId) {
                 $this->insert("appointment_service", [
                     "appointment_id" => $appointmentId,
@@ -130,7 +133,7 @@ class Appointment extends CRUD
     {
         $this->beginTransaction();
         try {
-            $stmt = $this->prepare("SELECT id FROM appointments WHERE id = :id FOR UPDATE");
+            $stmt = $this->prepare("SELECT id FROM {$this->table} WHERE id = :id FOR UPDATE");
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
             if ($stmt->fetchColumn() === false) {
@@ -138,7 +141,7 @@ class Appointment extends CRUD
                 return false;
             }
             $data["id"] = $id;
-            $this->update("appointments", $data);
+            $this->update($this->table, $data);
             $stmt = $this->prepare("DELETE FROM appointment_service WHERE appointment_id = :appointment_id");
             $stmt->bindValue(":appointment_id", $id, PDO::PARAM_INT);
             $stmt->execute();
@@ -160,6 +163,6 @@ class Appointment extends CRUD
 
     public function deleteById($id)
     {
-        return $this->delete("appointments", $id);
+        return $this->delete($this->table, $id);
     }
 }
