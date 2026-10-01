@@ -42,32 +42,51 @@ $activePage = "appointments";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <?php require __DIR__ . "/../includes/head.php"; ?>
 </head>
+
 <body>
     <div class="app-layout">
         <?php require __DIR__ . "/../includes/sidebar.php"; ?>
         <div class="app-layout__content">
             <main class="appointment-delete">
-                <a class="back-link" href="index.php"><span class="icon icon--arrow-left" aria-hidden="true"></span> Retour aux rendez-vous</a>
+                <a class="back-link" href="index.php"><span class="icon icon--arrow-left" aria-hidden="true"></span>
+                    Retour aux rendez-vous</a>
                 <section class="confirmation" aria-labelledby="confirmation-title">
                     <span class="confirmation__symbol" aria-hidden="true"><span class="icon icon--trash"></span></span>
                     <h1 class="confirmation__title" id="confirmation-title">Supprimer ce rendez-vous ?</h1>
                     <p class="confirmation__description">Cette action est définitive.</p>
                     <dl class="confirmation__details">
-                        <div><dt><span class="icon icon--user" aria-hidden="true"></span> Patient</dt><dd><?= htmlspecialchars($record['patient_first_name'] . ' ' . $record['patient_last_name']) ?></dd></div>
-                        <div><dt><span class="icon icon--users" aria-hidden="true"></span> Médecin</dt><dd><?= htmlspecialchars($record['doctor_first_name'] . ' ' . $record['doctor_last_name']) ?></dd></div>
-                        <div><dt><span class="icon icon--calendar" aria-hidden="true"></span> Date et heure</dt><dd><?= htmlspecialchars(formatDateFr($record['starts_at'], true)) ?></dd></div>
-                        <div><dt><span class="icon icon--list" aria-hidden="true"></span> Services</dt><dd><?= htmlspecialchars($record['service_names'] ?? 'Aucun service') ?></dd></div>
+                        <div>
+                            <dt><span class="icon icon--user" aria-hidden="true"></span> Patient</dt>
+                            <dd><?= htmlspecialchars($record['patient_first_name'] . ' ' . $record['patient_last_name']) ?>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt><span class="icon icon--users" aria-hidden="true"></span> Médecin</dt>
+                            <dd><?= htmlspecialchars($record['doctor_first_name'] . ' ' . $record['doctor_last_name']) ?>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt><span class="icon icon--calendar" aria-hidden="true"></span> Date et heure</dt>
+                            <dd><?= htmlspecialchars(formatDateFr($record['starts_at'], true)) ?></dd>
+                        </div>
+                        <div>
+                            <dt><span class="icon icon--list" aria-hidden="true"></span> Services</dt>
+                            <dd><?= htmlspecialchars($record['service_names'] ?? 'Aucun service') ?></dd>
+                        </div>
                     </dl>
-                    <p class="confirmation__warning"><span class="icon icon--info" aria-hidden="true"></span> Le patient et les services seront conservés.</p>
+                    <p class="confirmation__warning"><span class="icon icon--info" aria-hidden="true"></span> Le patient
+                        et les services seront conservés.</p>
                     <form class="confirmation__form" action="appointment-delete.php" method="post">
                         <input type="hidden" name="id" value="<?= (int) $record['id'] ?>">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                         <div class="confirmation__actions">
                             <a class="button button--secondary" href="index.php">Conserver le rendez-vous</a>
-                            <button class="button button--danger" type="submit"><span class="icon icon--trash" aria-hidden="true"></span> Supprimer définitivement</button>
+                            <button class="button button--danger" type="submit"><span class="icon icon--trash"
+                                    aria-hidden="true"></span> Supprimer définitivement</button>
                         </div>
                     </form>
                 </section>
@@ -75,4 +94,5 @@ $activePage = "appointments";
         </div>
     </div>
 </body>
+
 </html>

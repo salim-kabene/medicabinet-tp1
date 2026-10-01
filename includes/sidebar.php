@@ -6,12 +6,14 @@
     <nav class="sidebar__nav" aria-label="Navigation principale">
         <ul class="sidebar__list">
             <li class="sidebar__item">
-                <a class="sidebar__link <?= $activePage === 'appointments' ? 'sidebar__link--active' : '' ?>" href="index.php" <?= $activePage === 'appointments' ? 'aria-current="page"' : '' ?>>
+                <a class="sidebar__link <?= $activePage === 'appointments' ? 'sidebar__link--active' : '' ?>"
+                    href="index.php" <?= $activePage === 'appointments' ? 'aria-current="page"' : '' ?>>
                     <span class="icon icon--calendar" aria-hidden="true"></span> Rendez-vous
                 </a>
             </li>
             <li class="sidebar__item">
-                <a class="sidebar__link <?= $activePage === 'patients' ? 'sidebar__link--active' : '' ?>" href="patients.php" <?= $activePage === 'patients' ? 'aria-current="page"' : '' ?>>
+                <a class="sidebar__link <?= $activePage === 'patients' ? 'sidebar__link--active' : '' ?>"
+                    href="patients.php" <?= $activePage === 'patients' ? 'aria-current="page"' : '' ?>>
                     <span class="icon icon--users" aria-hidden="true"></span> Patients
                 </a>
             </li>
