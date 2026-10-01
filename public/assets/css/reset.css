@@ -1,12 +1,53 @@
 /* 01 — Normalisation */
-*, *::before, *::after { box-sizing: border-box; }
-body, h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
-body { min-width: 320px; }
-img, svg { display: block; max-width: 100%; }
-button, input, select, textarea { font: inherit; }
-button, select { cursor: pointer; }
-textarea { resize: vertical; }
-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
-legend { padding: 0; }
-table { border-collapse: collapse; }
-[hidden] { display: none !important; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+}
+body {
+  min-width: 320px;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+select {
+  cursor: pointer;
+}
+textarea {
+  resize: vertical;
+}
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+legend {
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+}
+[hidden] {
+  display: none !important;
+}
