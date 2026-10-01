@@ -1,3 +1,12 @@
+
+/* Police locale */
+@font-face {
+    font-family: "Manrope";
+    src: url("../fonts/Manrope-Variable.ttf") format("truetype");
+    font-weight: 200 800;
+    font-style: normal;
+    font-display: swap;
+}
 /* 02 — Couleurs, typographie et dimensions communes */
 :root {
     --color-text: #142b43;
@@ -12,7 +21,7 @@
     --color-active: #d9f1f3;
     --color-danger: #cf2030;
     --color-danger-hover: #ad1725;
-    --font-body: Arial, Helvetica, sans-serif;
+    --font-body: "Manrope", Arial, Helvetica, sans-serif;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
